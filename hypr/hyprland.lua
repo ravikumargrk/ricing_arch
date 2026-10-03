@@ -16,10 +16,10 @@
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({
-    --output = "",
-    --mode = "preferred",
-    --scale = "auto",
+    --output   = "",
+    --mode     = "preferred",
     --position = "auto",
+    --scale    = "auto",
     output   = "eDP-1",
     mode     = "1920x1080@60",
     position = "0x0",
@@ -32,7 +32,9 @@ hl.monitor({
 ---------------------
 
 -- Set programs that you use
-local terminal    = "foot"
+local terminal    = "kitty"
+local fileManager = "dolphin"
+local menu        = "hyprlauncher"
 
 
 -------------------
@@ -44,12 +46,17 @@ local terminal    = "foot"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 -- Or execute your favorite apps at launch like this:
 --
-hl.on("hyprland.start", function () 
-   hl.exec_cmd("/usr/bin/hyprpaper")
-   --hl.exec_cmd("nm-applet")
-   --hl.exec_cmd(terminal)
-   --hl.exec_cmd("waybar & hyprpaper & firefox")
+-- hl.on("hyprland.start", function () 
+--   hl.exec_cmd(terminal)
+--   hl.exec_cmd("nm-applet")
+--   hl.exec_cmd("waybar & hyprpaper & firefox")
+-- end)
+
+hl.on("hyprland.start", function()
+    hl.exec_cmd("/usr/bin/hyprpaper")
 end)
+
+-- hl.plugin.load("/home/ravi/.config/hypr/plugins/hyprglass.so")
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
@@ -59,10 +66,6 @@ end)
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
-
--- Built against this machine's installed Hyprland build.
-hl.plugin.load("/home/ravi/.config/hypr/plugins/hyprglass.so")
-
 
 -----------------------
 ----- PERMISSIONS -----
@@ -90,15 +93,14 @@ hl.plugin.load("/home/ravi/.config/hypr/plugins/hyprglass.so")
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        layout = "scrolling",
-        gaps_in = 6,
+        gaps_in  = 6,
         gaps_out = 10,
 
         border_size = 0,
 
         col = {
-            active_border = "rgba(00000000)",
-            inactive_border = "rgba(00000000)",
+            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
+            inactive_border = "rgba(595959aa)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -106,13 +108,15 @@ hl.config({
 
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
         allow_tearing = false,
+
+        layout = "scrolling",
     },
     decoration = {
-        rounding       = 20,
+        rounding       = 10,
         rounding_power = 2,
 
-        active_opacity   = 0.95,
-        inactive_opacity = 0.75,
+        active_opacity     = 0.75,
+        inactive_opacity   = 0.65,
         fullscreen_opacity = 1.0,
 
         shadow = {
@@ -124,67 +128,24 @@ hl.config({
 
         blur = {
             enabled           = true,
-            size              = 64,
-            passes            = 10,
+            size              = 10,
+            passes            = 5,
             ignore_opacity    = true,
             new_optimizations = true,
             special           = false,
-            popups           = true,
-            noise             = 0.02,
+            popups            = true,
+            noise             = 0.05,
             contrast          = 1.30,
             brightness        = 0.50,
             vibrancy          = 0.20,
             vibrancy_darkness = 0.35,
-            variant           = 8,
-            acrylic = {
-                tint = "rgba(5, 17, 22, 0.80)",
-                clarity = 1.0,
-                refraction = 0.65,
-                bulb = 8.0,
-                aberration = 0.04,
-            },
+            --variant           = 8,
         },
     },
     animations = {
         enabled = true,
     },
-    
 })
-
-if hl.plugin.hyprglass then
-    local hg = hl.plugin.hyprglass
-
-    hg.preset("foot-acrylic", {
-        blur_strength        = 3.2,
-        blur_iterations      = 3,
-        refraction_strength  = 0.14,
-        refraction_flow      = 0.65,
-        refraction_spread    = 0.32,
-        chromatic_aberration = 0.08,
-        fresnel_strength     = 0.18,
-        fresnel_tint         = 0.15,
-        specular_strength    = 0.18,
-        glass_opacity        = 1.0,
-        edge_thickness       = 0.06,
-        lens_distortion      = 0.04,
-        tint_color           = 0x789BBC20,
-        dark = {
-            brightness    = 0.94,
-            contrast      = 0.94,
-            saturation    = 0.88,
-            vibrancy      = 0.18,
-            adaptive_dim  = 0.22,
-        },
-    })
-
-    hg.config({
-        enabled           = true,
-        manage_window_blur = true,
-        skip_opaque_windows = true,
-        default_theme     = "dark",
-        default_preset    = "foot-acrylic",
-    })
-end
 
 -- Default curves and animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
 hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
@@ -232,13 +193,27 @@ hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "
 --     rounding    = 0,
 -- })
 
+-- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
+hl.config({
+    dwindle = {
+        preserve_split = true, -- You probably want this
+    },
+})
+
+-- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
+hl.config({
+    master = {
+        new_status = "master",
+    },
+})
+
 -- See https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/ for more
 hl.config({
     scrolling = {
-        fullscreen_on_one_column = false,
-	column_width = 0.98,
-	follow_focus = true,
-	direction = "right"
+        fullscreen_on_one_column = true,
+	column_width=0.98,
+	follow_focus=true,
+	direction="right",
     },
 })
 
@@ -276,6 +251,12 @@ hl.config({
     },
 })
 
+hl.gesture({
+    fingers = 3,
+    direction = "horizontal",
+    action = "workspace"
+})
+
 -- Example per-device config
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
 hl.device({
@@ -291,13 +272,16 @@ hl.device({
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + W", hl.dsp.window.close())
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd("google-chrome-stable"))
+local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
-hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd("google-chrome-stable"))
-hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
-hl.bind("Print", hl.dsp.exec_cmd("grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"))
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+-- hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
+hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -389,3 +373,39 @@ hl.window_rule({
     move  = "20 monitor_h-120",
     float = true,
 })
+
+if hl.plugin.hyprglass then
+    local hg = hl.plugin.hyprglass
+
+    hg.preset("frosted", {
+        blur_strength        = 8.0,
+        blur_iterations      = 5,
+        refraction_strength  = 0.08,
+        refraction_flow      = 0.50,
+        refraction_spread    = 0.28,
+        chromatic_aberration = 0.03,
+        fresnel_strength     = 0.12,
+        fresnel_tint         = 0.10,
+        specular_strength    = 0.12,
+        glass_opacity        = 1.0,
+        edge_thickness       = 0.04,
+        lens_distortion      = 0.02,
+        tint_color           = 0x789BBC20,
+
+        dark = {
+            brightness   = 0.94,
+            contrast     = 0.92,
+            saturation   = 0.85,
+            vibrancy     = 0.12,
+            adaptive_dim = 0.20,
+        },
+    })
+
+    hg.config({
+        enabled             = true,
+        manage_window_blur  = true,
+        skip_opaque_windows = true,
+        default_theme       = "dark",
+        default_preset      = "frosted",
+    })
+end
